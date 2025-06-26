@@ -34,7 +34,7 @@
                     <td><input type="checkbox" name="considerar" {% if row['Considerar no cálculo'] %}checked{% endif %}></td>
                     <td>{{ row.MrpTipo }}</td>
                     <td>{{ row.ItemCode }}</td>
-                    <td>{{ row.ItemName }}</td>
+                    <td><a href="{{ url_for('optimize', item_code=row.ItemCode) }}">{{ row.ItemName }}</a></td>
                     <td>{{ row.MRP }}</td>
                     <td>{{ row.Estoque }}</td>
                     <td>{{ row.EstoqueMax }}</td>

@@ -53,3 +53,56 @@ if (backButton) {
     window.location.href = '/';
   });
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // Lógica para o modal de detalhes do item na página de relatório
+    document.querySelectorAll('.combo-table tr[data-entries]').forEach(row => {
+        row.addEventListener('click', () => {
+            const entries = JSON.parse(row.getAttribute('data-entries'));
+            const modal = document.getElementById('item-detail');
+            if (!modal) return; // Só executa se o modal existir na página
+
+            const tableBody = modal.querySelector('#detail-table tbody');
+            tableBody.innerHTML = ''; 
+
+            // Agrupa itens para evitar duplicatas no modal
+            const uniqueItems = {};
+            entries.forEach(item => {
+                uniqueItems[item.code] = item;
+            });
+
+            Object.values(uniqueItems).forEach(it => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${it.code}</td>
+                    <td>${it.name}</td>
+                    <td>${it.Estoque}</td>
+                    <td>${it.ToCut}</td>
+                    <td>${it.EstoqueFinal}</td>
+                    <td>${it.EstoqueMin}</td>
+                    <td>${it.EstoqueMax}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+            
+            modal.style.display = 'block';
+        });
+    });
+
+    // Lógica para fechar o modal
+    const modal = document.getElementById('item-detail');
+    if (modal) {
+        const closeButton = document.getElementById('close-modal');
+        if(closeButton) {
+            closeButton.onclick = () => {
+                modal.style.display = 'none';
+            };
+        }
+        window.onclick = (event) => {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        };
+    }
+});

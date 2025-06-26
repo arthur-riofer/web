@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Otimização de Cálculo Unitário</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .item-info-card {
+            background-color: var(--cor-fundo-cartao);
+            border: 1px solid var(--cor-borda-cartao);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .item-info-card h2 {
+            margin-top: 0;
+            color: var(--cor-texto-principal);
+        }
+        .item-info-card p {
+            margin: 0.5rem 0;
+            color: var(--cor-texto-secundario);
+        }
+    </style>
+</head>
+<body>
+    <div class="site-main" style="max-width: 900px;">
+        <div style="grid-column: 1 / -1;">
+            <h1>⚙️ Otimização de Cálculo Unitário</h1>
+
+            <div class="item-info-card">
+                <h2>Item Selecionado</h2>
+                <p><strong>Código:</strong> {{ item.ItemCode }}</p>
+                <p><strong>Nome:</strong> {{ item.ItemName }}</p>
+                <p><strong>Desenvolvimento:</strong> {{ item.Desenvolvimento }}mm</p>
+            </div>
+
+            <form method="post" action="{{ url_for('optimize', item_code=item.ItemCode) }}" class="card">
+                <label for="sheet_width">Largura da Chapa (mm):</label>
+                <input type="number" id="sheet_width" name="sheet_width" value="{{ sheet_width }}" style="margin-right: 20px;">
+
+                <label for="expected_loss">Perda Esperada (mm):</label>
+                <input type="number" id="expected_loss" name="expected_loss" value="{{ expected_loss }}">
+
+                <button type="submit" style="margin-left: 20px;">Re-calcular</button>
+            </form>
+
+            <section style="margin-top: 2rem;" class="card">
+              <h2>📋 Top 10 Soluções Ótimas</h2>
+              <table class="combo-table">
+                <thead>
+                    <tr>
+                        <th>Ranking</th>
+                        <th>Combinação de Cortes</th>
+                        <th>Aproveitamento (mm)</th>
+                        <th>Sobra (mm)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sol in solutions %}
+                    <tr>
+                        <td>#{{ loop.index }}</td>
+                        <td>{{ sol.combination_str }}</td>
+                        <td>{{ sol.total_width }}</td>
+                        <td>{{ sol.waste }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" style="text-align: center;">Nenhuma combinação encontrada com os critérios informados.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+              </table>
+            </section>
+
+            <a href="/" class="back-button" style="margin-top: 2rem;">⬅️ Voltar para Seleção</a>
+        </div>
+    </div>
+</body>
+</html>

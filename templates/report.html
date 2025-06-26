@@ -31,7 +31,7 @@
       {% for it in items %}
         <tr>
           <td>{{ it.ItemCode }}</td>
-          <td>{{ it.ItemName }}</td>
+          <td><a href="{{ url_for('optimize', item_code=it.ItemCode) }}">{{ it.ItemName }}</a></td>
           <td>{{ it.Estoque }}</td>
           <td>{{ it.ToCut }}</td>
           <td>{{ it.EstoqueFinal }}</td>
