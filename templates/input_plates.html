@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Informações de Insumo</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <h1>📝 Informações de Insumo</h1>
+    <form action="/calculate" method="post">
+        <input type="hidden" name="original_data" value="{{ original_data }}">
+        <h2>Chapas Necessárias:</h2>
+        <table class="combo-table">
+            <thead>
+                <tr>
+                    <th>Espessura (mm)</th>
+                    <th>Comprimento</th>
+                    <th>Quantidade de Chapas</th>
+                    <th>Largura das Chapas (mm)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for plate in plate_types %}
+                <tr>
+                    <td>{{ plate.Espessura }}</td>
+                    <td>{{ plate.SheetLengthType }}</td>
+                    <td><input type="number" name="quantity_{{ plate.Espessura }}_{{ plate.SheetLengthType }}" value="999" min="1" style="width: 100px;"></td>
+                    <td><input type="number" name="width_{{ plate.Espessura }}_{{ plate.SheetLengthType }}" value="1200" min="1" style="width: 100px;"></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit" id="gerar-calculo" style="margin-top: 20px;">Calcular Otimização</button>
+    </form>
+    <a href="/" class="back-button">⬅️ Voltar para Seleção</a>
+</body>
+</html>
