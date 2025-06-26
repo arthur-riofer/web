@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Relatório de Corte</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <h1>Relatório de Corte Otimizado</h1>
+
+  {% for grp in report %}
+    <section>
+      <h2>Espessura: {{ grp.espessura }}mm - Chapa {{ grp.tipo }}</h2>
+      <table class="combo-table">
+        <tr><th>Combinação de Cortes</th><th>Qte Chapas</th></tr>
+        {% for row in grp.summary %}
+          <tr data-entries='{{ row.entries | tojson }}'>
+            <td>{{ row.cuts }}</td>
+            <td>{{ row.count }}</td>
+          </tr>
+        {% endfor %}
+        <tr><td><strong>Total</strong></td><td>{{ grp.sheet_count }}</td></tr>
+      </table>
+    </section>
+  {% endfor %}
+
+  <section>
+    <h2>Resumo Final por Item</h2>
+    <table>
+      <tr><th>ItemCode</th><th>ItemName</th><th>Estoque</th><th>ToCut</th><th>EstoqueFinal</th><th>Min</th><th>Max</th></tr>
+      {% for it in items %}
+        <tr>
+          <td>{{ it.ItemCode }}</td>
+          <td>{{ it.ItemName }}</td>
+          <td>{{ it.Estoque }}</td>
+          <td>{{ it.ToCut }}</td>
+          <td>{{ it.EstoqueFinal }}</td>
+          <td>{{ it.EstoqueMin }}</td>
+          <td>{{ it.EstoqueMax }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  </section>
+
+  <h3>Total Geral de Chapas: {{ total_sheets }}</h3>
+
+  <div id="item-detail" class="modal" style="display:none;">
+    <div class="modal-content">
+      <span id="close-modal" class="close">&times;</span>
+      <h3>Detalhes dos Itens</h3>
+      <table id="detail-table">
+        <tr><th>ItemCode</th><th>ItemName</th><th>Estoque</th><th>ToCut</th><th>EstoqueFinal</th><th>Min</th><th>Max</th></tr>
+      </table>
+    </div>
+  </div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
