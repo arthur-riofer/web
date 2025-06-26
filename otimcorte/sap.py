@@ -5,8 +5,11 @@ from firebase_admin import credentials, firestore
 from cryptography.fernet import Fernet
 
 def obter_dados_do_sap():
-    cred=credentials.Certificate("riofer-537b0-firebase-adminsdk-buo66-13151ce8e2.json")
-    firebase_admin.initialize_app(cred)
+    # Verifica se o app Firebase já foi inicializado
+    if not firebase_admin._apps:
+        cred = credentials.Certificate("riofer-537b0-firebase-adminsdk-buo66-13151ce8e2.json")
+        firebase_admin.initialize_app(cred)
+    
     db=firestore.client()
     key=open("secret.key","rb").read()
     f=Fernet(key)

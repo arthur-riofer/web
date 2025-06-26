@@ -1,10 +1,14 @@
 document.querySelectorAll('.combo-table tr[data-entries]').forEach(row => {
   row.addEventListener('click', () => {
     const entries = JSON.parse(row.getAttribute('data-entries'));
-    const table = document.getElementById('detail-table');
-    table.querySelectorAll('tr.item-row').forEach(r=>r.remove());
+    const modal = document.getElementById('item-detail');
+    const tableBody = document.getElementById('detail-table').querySelector('tbody');
+    
+    // Limpa a tabela de detalhes antes de adicionar novas linhas
+    tableBody.innerHTML = ''; 
+
     entries.forEach(it => {
-      const tr = document.createElement('tr'); tr.classList.add('item-row');
+      const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>${it.code}</td>
         <td>${it.name}</td>
@@ -14,13 +18,38 @@ document.querySelectorAll('.combo-table tr[data-entries]').forEach(row => {
         <td>${it.EstoqueMin}</td>
         <td>${it.EstoqueMax}</td>
       `;
-      table.appendChild(tr);
+      tableBody.appendChild(tr);
     });
-    document.getElementById('item-detail').style.display = 'block';
+
+    // Exibe o modal
+    modal.style.display = 'block';
   });
 });
 
-// fecha modal
-document.getElementById('close-modal').onclick = () => {
-  document.getElementById('item-detail').style.display = 'none';
+// Lógica para fechar o modal
+const modal = document.getElementById('item-detail');
+const closeButton = document.getElementById('close-modal');
+
+// Fecha ao clicar no botão (X)
+if(closeButton) {
+    closeButton.onclick = () => {
+        modal.style.display = 'none';
+    };
+}
+
+
+// Fecha ao clicar fora do conteúdo do modal
+window.onclick = (event) => {
+  if (event.target == modal) {
+    modal.style.display = 'none';
+  }
 };
+
+// Mantém a lógica do botão de voltar da página
+const backButton = document.querySelector('.back-button');
+if (backButton) {
+  backButton.addEventListener('click', (e) => {
+    e.preventDefault();
+    window.location.href = '/';
+  });
+}
