@@ -4,11 +4,7 @@
  --cor-borda-cartao: rgba(189, 195, 199, 0.2); 
  --cor-texto-principal: #f0f0f5; 
  --cor-texto-secundario: #a0a0b2; 
- --cor-verde: #27ae60; 
- --cor-amarelo: #f1c40f; 
- --cor-vermelho: #c0392b; 
- --cor-sucesso-hover: #2ecc71; 
- --fonte-principal: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; 
+ --fonte-principal: 'Inter'; 
 }
 
 body {
@@ -16,8 +12,6 @@ body {
  padding: 0;
  font-family: var(--fonte-principal);
  background-color: var(--cor-fundo-principal);
- background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.08) 1px, transparent 0);
- background-size: 20px 20px;
  color: var(--cor-texto-principal);
  display: flex;
  flex-direction: column;

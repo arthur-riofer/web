@@ -5,7 +5,7 @@ from firebase_admin import credentials, firestore
 from cryptography.fernet import Fernet
 
 def obter_dados_do_sap():
-    # Verifica se o app Firebase já foi inicializado
+    
     if not firebase_admin._apps:
         cred = credentials.Certificate("riofer-537b0-firebase-adminsdk-buo66-13151ce8e2.json")
         firebase_admin.initialize_app(cred)

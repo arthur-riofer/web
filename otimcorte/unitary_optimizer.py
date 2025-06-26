@@ -1,14 +1,10 @@
 import itertools
 
 def find_optimal_combinations(main_item, all_items, sheet_width, expected_loss, development_variation, max_items_per_sheet):
-    """
-    Encontra as 10 melhores combinações de corte, considerando variações de desenvolvimento
-    e um número máximo de itens por chapa. Impede a repetição de planos de corte.
-    """
+
     solutions = []
     usable_width = sheet_width - expected_loss
 
-    # Filtra parceiros potenciais
     potential_partners = [
         item for item in all_items
         if (item['Espessura'] == main_item['Espessura'] and
@@ -21,7 +17,6 @@ def find_optimal_combinations(main_item, all_items, sheet_width, expected_loss, 
 
     items_to_process = [main_item] + potential_partners
 
-    # --- Gera combinações de itens respeitando o limite selecionado pelo usuário ---
     for i in range(1, max_items_per_sheet + 1):
         if len(items_to_process) < i:
             continue
@@ -77,18 +72,13 @@ def find_optimal_combinations(main_item, all_items, sheet_width, expected_loss, 
                         'priority': 999999 if len(combo_items) == 1 else priority
                     })
 
-    # --- LÓGICA ATUALIZADA: Impede repetição de planos de corte ---
-    # Agrupa soluções por plano de corte (mesmos itens e quantidades), mantendo apenas a de menor 'waste'.
     best_solutions_for_plan = {}
     for sol in solutions:
-        # A chave agora ignora a variação de medida, focando no plano de corte.
         plan_key = tuple(sorted([(d['name'], d['qty']) for d in sol['details']]))
         
-        # Se o plano é novo ou se a solução atual tem um desperdício menor, armazena/substitui.
         if plan_key not in best_solutions_for_plan or sol['waste'] < best_solutions_for_plan[plan_key]['waste']:
             best_solutions_for_plan[plan_key] = sol
 
-    # Ordena as soluções únicas pelo menor desperdício e depois pela maior prioridade.
     sorted_solutions = sorted(best_solutions_for_plan.values(), key=lambda x: (x['waste'], -x['priority']))
 
     return sorted_solutions[:10]

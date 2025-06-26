@@ -11,7 +11,7 @@ app = Flask(__name__)
 data_cache = {}
 
 def get_full_data():
-    """Busca os dados do SAP e armazena em cache para a sessão."""
+    
     if 'full_df' not in data_cache:
         df = obter_dados_do_sap()
         
@@ -99,9 +99,7 @@ def calculate():
 
 @app.route('/optimize/<item_code>', methods=['GET', 'POST'])
 def optimize(item_code):
-    """
-    Tela de otimização de cálculo unitário para um item específico.
-    """
+
     if request.method == 'POST':
         sheet_width = int(request.form.get('sheet_width', 1200))
         expected_loss = int(request.form.get('expected_loss', 20))
