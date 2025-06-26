@@ -1,29 +1,14 @@
 import itertools
 
-def find_optimal_combinations(main_item, all_items, sheet_width, expected_loss):
+def find_optimal_combinations(main_item, all_items, sheet_width, expected_loss, development_variation, max_items_per_sheet):
     """
-    Encontra as 10 melhores combinações de corte para um item principal,
-    com base em regras de prioridade e necessidade de estoque.
+    Encontra as 10 melhores combinações de corte, considerando variações de desenvolvimento
+    e um número máximo de itens por chapa. Impede a repetição de planos de corte.
     """
     solutions = []
     usable_width = sheet_width - expected_loss
-    main_item_size = main_item['Desenvolvimento']
 
-    # --- 1. A melhor solução: Apenas o item principal repetido ---
-    if main_item_size > 0:
-        qty = int(usable_width // main_item_size)
-        if qty > 0:
-            total_width = qty * main_item_size
-            solutions.append({
-                'combination': {main_item['ItemName']: qty},
-                'total_width': total_width,
-                'waste': usable_width - total_width,
-                'priority': 999999  # Prioridade máxima para a solução solo
-            })
-
-    # --- 2. Soluções combinadas com 2 ou 3 itens diferentes ---
-    
-    # Filtra parceiros potenciais do mesmo grupo e com necessidade de estoque
+    # Filtra parceiros potenciais
     potential_partners = [
         item for item in all_items
         if (item['Espessura'] == main_item['Espessura'] and
@@ -32,66 +17,78 @@ def find_optimal_combinations(main_item, all_items, sheet_width, expected_loss):
             item['EstoqueMax'] > item['DispPkl'] and
             item['Desenvolvimento'] > 0)
     ]
-    
-    # Ordena os parceiros pelo fator determinante: (EstoqueMax - DispPkl)
     potential_partners.sort(key=lambda x: (x['EstoqueMax'] - x['DispPkl']), reverse=True)
 
-    # Gera combinações de 1 ou 2 parceiros para juntar com o item principal
-    for i in range(1, 3):
-        if len(potential_partners) < i:
+    items_to_process = [main_item] + potential_partners
+
+    # --- Gera combinações de itens respeitando o limite selecionado pelo usuário ---
+    for i in range(1, max_items_per_sheet + 1):
+        if len(items_to_process) < i:
             continue
-        
-        for combo in itertools.combinations(potential_partners, i):
-            items_to_combine = [main_item] + list(combo)
-            
-            # Tenta encontrar a melhor combinação de quantidades para os itens selecionados
-            # Esta é uma abordagem simplificada de "knapsack problem"
-            best_combo_for_this_set = None
-            min_waste = float('inf')
 
-            # Itera sobre quantidades possíveis para cada item na combinação
-            # (limitado a um número razoável para evitar processamento infinito)
-            item_sizes = [it['Desenvolvimento'] for it in items_to_combine]
-            max_qtys = [int(usable_width // size) if size > 0 else 0 for size in item_sizes]
+        for combo_items in itertools.combinations(items_to_process, i):
+            if main_item['ItemCode'] not in [c['ItemCode'] for c in combo_items]:
+                continue
             
-            # Gera todas as permutações de quantidades
-            qty_ranges = [range(max_qty + 1) for max_qty in max_qtys]
-            for qtys in itertools.product(*qty_ranges):
-                # O item principal deve sempre estar presente
-                if qtys[0] == 0:
-                    continue
-                
-                total_width = sum(size * qty for size, qty in zip(item_sizes, qtys))
-                
-                if total_width <= usable_width:
-                    waste = usable_width - total_width
-                    if waste < min_waste:
-                        min_waste = waste
-                        current_priority = sum(p['EstoqueMax'] - p['DispPkl'] for p in combo)
-                        best_combo_for_this_set = {
-                            'combination': {item['ItemName']: qty for item, qty in zip(items_to_combine, qtys) if qty > 0},
-                            'total_width': total_width,
-                            'waste': waste,
-                            'priority': current_priority
-                        }
-            
-            if best_combo_for_this_set:
-                solutions.append(best_combo_for_this_set)
+            size_variations_per_item = []
+            for item in combo_items:
+                original_size = item['Desenvolvimento']
+                variations = [original_size]
+                if development_variation > 0:
+                    variations.extend([original_size + development_variation, original_size - development_variation])
+                size_variations_per_item.append(list(set(v for v in variations if v > 0)))
 
-    # --- Ordena e filtra as 10 melhores soluções ---
-    # Remove duplicados baseados na combinação e na sobra
-    unique_solutions = {}
+            for size_set in itertools.product(*size_variations_per_item):
+                best_qtys = [0] * len(combo_items)
+                min_waste = float('inf')
+
+                max_qtys = [int(usable_width // size) if size > 0 else 0 for size in size_set]
+                qty_ranges = [range(max_qty + 1) for max_qty in max_qtys]
+
+                for qtys in itertools.product(*qty_ranges):
+                    main_item_index = [idx for idx, item in enumerate(combo_items) if item['ItemCode'] == main_item['ItemCode']][0]
+                    if qtys[main_item_index] == 0:
+                        continue
+
+                    total_width = sum(size * qty for size, qty in zip(size_set, qtys))
+                    
+                    if total_width <= usable_width:
+                        waste = usable_width - total_width
+                        if waste < min_waste:
+                            min_waste = waste
+                            best_qtys = qtys
+                
+                if sum(best_qtys) > 0:
+                    combination_details = []
+                    for idx, item in enumerate(combo_items):
+                        if best_qtys[idx] > 0:
+                            combination_details.append({
+                                'name': item['ItemName'],
+                                'qty': best_qtys[idx],
+                                'original_size': item['Desenvolvimento'],
+                                'used_size': size_set[idx]
+                            })
+                    
+                    priority = sum(p['EstoqueMax'] - p['DispPkl'] for p in combo_items if p['ItemCode'] != main_item['ItemCode'])
+                    solutions.append({
+                        'details': combination_details,
+                        'total_width': usable_width - min_waste,
+                        'waste': min_waste,
+                        'priority': 999999 if len(combo_items) == 1 else priority
+                    })
+
+    # --- LÓGICA ATUALIZADA: Impede repetição de planos de corte ---
+    # Agrupa soluções por plano de corte (mesmos itens e quantidades), mantendo apenas a de menor 'waste'.
+    best_solutions_for_plan = {}
     for sol in solutions:
-        # Cria uma chave única para cada combinação de itens e quantidades
-        combo_key = tuple(sorted(sol['combination'].items()))
-        if combo_key not in unique_solutions or sol['waste'] < unique_solutions[combo_key]['waste']:
-             unique_solutions[combo_key] = sol
+        # A chave agora ignora a variação de medida, focando no plano de corte.
+        plan_key = tuple(sorted([(d['name'], d['qty']) for d in sol['details']]))
+        
+        # Se o plano é novo ou se a solução atual tem um desperdício menor, armazena/substitui.
+        if plan_key not in best_solutions_for_plan or sol['waste'] < best_solutions_for_plan[plan_key]['waste']:
+            best_solutions_for_plan[plan_key] = sol
 
-    # Ordena pela menor sobra (waste) e depois pela maior prioridade
-    sorted_solutions = sorted(unique_solutions.values(), key=lambda x: (x['waste'], -x['priority']))
-    
-    # Formata a string de combinação para exibição
-    for sol in sorted_solutions:
-        sol['combination_str'] = ", ".join([f"{name} ({qty}x)" for name, qty in sol['combination'].items()])
+    # Ordena as soluções únicas pelo menor desperdício e depois pela maior prioridade.
+    sorted_solutions = sorted(best_solutions_for_plan.values(), key=lambda x: (x['waste'], -x['priority']))
 
     return sorted_solutions[:10]

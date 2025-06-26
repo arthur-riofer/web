@@ -95,28 +95,41 @@ def calculate():
 
 
 # --- NOVA ROTA PARA OTIMIZAÇÃO UNITÁRIA ---
+# --- ROTA DE OTIMIZAÇÃO UNITÁRIA ATUALIZADA ---
+# --- ROTA DE OTIMIZAÇÃO UNITÁRIA ATUALIZADA ---
 @app.route('/optimize/<item_code>', methods=['GET', 'POST'])
 def optimize(item_code):
     """
     Tela de otimização de cálculo unitário para um item específico.
     """
-    sheet_width = int(request.form.get('sheet_width', 1200))
-    expected_loss = int(request.form.get('expected_loss', 20))
+    if request.method == 'POST':
+        sheet_width = int(request.form.get('sheet_width', 1200))
+        expected_loss = int(request.form.get('expected_loss', 20))
+        development_variation = int(request.form.get('development_variation', 0))
+        # --- NOVO PARÂMETRO: Obtém a opção de itens por chapa ---
+        max_items_option = request.form.get('max_items_option', '3')
+    else: # GET request
+        sheet_width = 1200
+        expected_loss = 20
+        development_variation = 0
+        max_items_option = '3' # Valor padrão na primeira visita
 
+    max_items_per_sheet = int(max_items_option)
     full_df = get_full_data()
     
-    # Encontra o item principal
     main_item_series = full_df[full_df['ItemCode'] == item_code]
     if main_item_series.empty:
         return "Item não encontrado!", 404
     main_item = main_item_series.iloc[0].to_dict()
 
-    # Chama a nova lógica de otimização
+    # Chama a lógica de otimização com os novos parâmetros
     solutions = find_optimal_combinations(
         main_item=main_item,
         all_items=full_df.to_dict(orient='records'),
         sheet_width=sheet_width,
-        expected_loss=expected_loss
+        expected_loss=expected_loss,
+        development_variation=development_variation,
+        max_items_per_sheet=max_items_per_sheet # Passa o limite de itens
     )
 
     return render_template(
@@ -124,7 +137,9 @@ def optimize(item_code):
         item=main_item,
         solutions=solutions,
         sheet_width=sheet_width,
-        expected_loss=expected_loss
+        expected_loss=expected_loss,
+        development_variation=development_variation,
+        selected_option=max_items_option # Passa a opção selecionada para o template
     )
 
 if __name__ == '__main__':

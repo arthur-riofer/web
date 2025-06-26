@@ -5,21 +5,15 @@
     <title>Otimização de Cálculo Unitário</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
-        .item-info-card {
-            background-color: var(--cor-fundo-cartao);
-            border: 1px solid var(--cor-borda-cartao);
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        .item-info-card h2 {
-            margin-top: 0;
-            color: var(--cor-texto-principal);
-        }
-        .item-info-card p {
-            margin: 0.5rem 0;
-            color: var(--cor-texto-secundario);
-        }
+        .item-info-card { background-color: var(--cor-fundo-cartao); border: 1px solid var(--cor-borda-cartao); border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem; }
+        .item-info-card h2 { margin-top: 0; color: var(--cor-texto-principal); }
+        .item-info-card p { margin: 0.5rem 0; color: var(--cor-texto-secundario); }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; align-items: end; }
+        .size-normal { color: #3498db; } /* Azul */
+        .size-increased { color: #2ecc71; } /* Verde */
+        .size-decreased { color: #e74c3c; } /* Vermelho */
+        select, input { width: 100%; box-sizing: border-box; padding: 10px; background-color: var(--cor-fundo-principal); border: 1px solid var(--cor-borda-cartao); border-radius: 5px; color: var(--cor-texto-principal); }
+        label { display: block; margin-bottom: 0.5rem; }
     </style>
 </head>
 <body>
@@ -31,17 +25,33 @@
                 <h2>Item Selecionado</h2>
                 <p><strong>Código:</strong> {{ item.ItemCode }}</p>
                 <p><strong>Nome:</strong> {{ item.ItemName }}</p>
-                <p><strong>Desenvolvimento:</strong> {{ item.Desenvolvimento }}mm</p>
+                <p><strong>Desenvolvimento Padrão:</strong> {{ item.Desenvolvimento }}mm</p>
             </div>
 
             <form method="post" action="{{ url_for('optimize', item_code=item.ItemCode) }}" class="card">
-                <label for="sheet_width">Largura da Chapa (mm):</label>
-                <input type="number" id="sheet_width" name="sheet_width" value="{{ sheet_width }}" style="margin-right: 20px;">
-
-                <label for="expected_loss">Perda Esperada (mm):</label>
-                <input type="number" id="expected_loss" name="expected_loss" value="{{ expected_loss }}">
-
-                <button type="submit" style="margin-left: 20px;">Re-calcular</button>
+                <div class="form-grid">
+                    <div>
+                        <label for="sheet_width">Largura da Chapa (mm):</label>
+                        <input type="number" id="sheet_width" name="sheet_width" value="{{ sheet_width }}">
+                    </div>
+                    <div>
+                        <label for="expected_loss">Perda Esperada (mm):</label>
+                        <input type="number" id="expected_loss" name="expected_loss" value="{{ expected_loss }}">
+                    </div>
+                    <div>
+                        <label for="development_variation">Variação (mm):</label>
+                        <input type="number" id="development_variation" name="development_variation" value="{{ development_variation }}">
+                    </div>
+                    <div>
+                        <label for="max_items_option">Itens por Chapa:</label>
+                        <select id="max_items_option" name="max_items_option">
+                            <option value="1" {% if selected_option == '1' %}selected{% endif %}>1 item por chapa</option>
+                            <option value="2" {% if selected_option == '2' %}selected{% endif %}>Até 2 itens por chapa</option>
+                            <option value="3" {% if selected_option == '3' %}selected{% endif %}>Até 3 itens por chapa</option>
+                        </select>
+                    </div>
+                    <button type="submit">Re-calcular</button>
+                </div>
             </form>
 
             <section style="margin-top: 2rem;" class="card">
@@ -49,19 +59,27 @@
               <table class="combo-table">
                 <thead>
                     <tr>
-                        <th>Ranking</th>
-                        <th>Combinação de Cortes</th>
-                        <th>Aproveitamento (mm)</th>
-                        <th>Sobra (mm)</th>
+                        <th style="width: 80px;">Ranking</th>
+                        <th>Combinação de Cortes (Nome, Quantidade e Medida Utilizada)</th>
+                        <th style="width: 150px;">Aproveitamento (mm)</th>
+                        <th style="width: 120px;">Sobra (mm)</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for sol in solutions %}
                     <tr>
                         <td>#{{ loop.index }}</td>
-                        <td>{{ sol.combination_str }}</td>
-                        <td>{{ sol.total_width }}</td>
-                        <td>{{ sol.waste }}</td>
+                        <td>
+                            {% for detail in sol.details %}
+                                {% set color_class = 'size-normal' %}
+                                {% if detail.used_size > detail.original_size %}{% set color_class = 'size-increased' %}{% endif %}
+                                {% if detail.used_size < detail.original_size %}{% set color_class = 'size-decreased' %}{% endif %}
+                                {{ detail.name }} ({{ detail.qty }}x) - <strong class="{{ color_class }}">{{ "%.1f"|format(detail.used_size) }}mm</strong>
+                                {% if not loop.last %}<br>{% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>{{ "%.1f"|format(sol.total_width) }}</td>
+                        <td>{{ "%.1f"|format(sol.waste) }}</td>
                     </tr>
                     {% else %}
                     <tr>
