@@ -28,12 +28,12 @@ class Sheet:
 def best_fit_grouped(entries, sheet_width=1200):
     sheets = []
     sid = 1
-    # Ordena as entradas pelo tamanho, da maior para a menor, para otimizar o encaixe
+    
     for entry in sorted(entries, key=lambda x: x['size'], reverse=True):
         best_sheet = None
         min_waste = float('inf')
 
-        # Tenta encontrar a melhor chapa existente para o corte
+        
         for sheet in sheets:
             if sheet.can_fit(entry):
                 waste = sheet.remaining - entry['size']
@@ -41,18 +41,18 @@ def best_fit_grouped(entries, sheet_width=1200):
                     best_sheet = sheet
                     min_waste = waste
         
-        # Se encontrou uma chapa, adiciona o corte
+        
         if best_sheet:
             best_sheet.add_cut(entry)
         else:
-            # Se não, cria uma nova chapa
+            
             new_sheet = Sheet(sid, max_width=sheet_width)
             if new_sheet.can_fit(entry):
                 new_sheet.add_cut(entry)
                 sheets.append(new_sheet)
                 sid += 1
 
-    # Agrupa os resultados por combinação de cortes
+    
     combo_map = defaultdict(lambda: {'count': 0, 'unique_items': {}})
     for sh in sheets:
         key = sh.combo_key()
@@ -77,8 +77,8 @@ def best_fit_grouped(entries, sheet_width=1200):
 
 def adjust_planned(row):
     est, plan, emin, emax = row['Estoque'], row['Planejado'], row['EstoqueMin'], row['EstoqueMax']
-    # A quantidade a cortar é o que falta para o estoque mínimo...
+    
     desired = max(emin - est, 0)
-    # ...limitado pelo que foi planejado e pelo que cabe até o estoque máximo.
+    
     capped = min(plan, emax - est)
     return max(desired, capped)

@@ -4,7 +4,7 @@ document.querySelectorAll('.combo-table tr[data-entries]').forEach(row => {
     const modal = document.getElementById('item-detail');
     const tableBody = document.getElementById('detail-table').querySelector('tbody');
     
-    // Limpa a tabela de detalhes antes de adicionar novas linhas
+    
     tableBody.innerHTML = ''; 
 
     entries.forEach(it => {
@@ -21,16 +21,16 @@ document.querySelectorAll('.combo-table tr[data-entries]').forEach(row => {
       tableBody.appendChild(tr);
     });
 
-    // Exibe o modal
+    
     modal.style.display = 'block';
   });
 });
 
-// Lógica para fechar o modal
+
 const modal = document.getElementById('item-detail');
 const closeButton = document.getElementById('close-modal');
 
-// Fecha ao clicar no botão (X)
+
 if(closeButton) {
     closeButton.onclick = () => {
         modal.style.display = 'none';
@@ -38,14 +38,14 @@ if(closeButton) {
 }
 
 
-// Fecha ao clicar fora do conteúdo do modal
+
 window.onclick = (event) => {
   if (event.target == modal) {
     modal.style.display = 'none';
   }
 };
 
-// Mantém a lógica do botão de voltar da página
+
 const backButton = document.querySelector('.back-button');
 if (backButton) {
   backButton.addEventListener('click', (e) => {
@@ -56,17 +56,17 @@ if (backButton) {
 
 document.addEventListener('DOMContentLoaded', function() {
     
-    // Lógica para o modal de detalhes do item na página de relatório
+    
     document.querySelectorAll('.combo-table tr[data-entries]').forEach(row => {
         row.addEventListener('click', () => {
             const entries = JSON.parse(row.getAttribute('data-entries'));
             const modal = document.getElementById('item-detail');
-            if (!modal) return; // Só executa se o modal existir na página
+            if (!modal) return; 
 
             const tableBody = modal.querySelector('#detail-table tbody');
             tableBody.innerHTML = ''; 
 
-            // Agrupa itens para evitar duplicatas no modal
+            
             const uniqueItems = {};
             entries.forEach(item => {
                 uniqueItems[item.code] = item;
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Lógica para fechar o modal
+    
     const modal = document.getElementById('item-detail');
     if (modal) {
         const closeButton = document.getElementById('close-modal');

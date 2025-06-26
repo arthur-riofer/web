@@ -1,20 +1,20 @@
 from flask import Flask, render_template, request, redirect, url_for
 from otimcorte.sap import obter_dados_do_sap
 from otimcorte.logic import adjust_planned, best_fit_grouped
-from otimcorte.unitary_optimizer import find_optimal_combinations # IMPORTA A NOVA LÓGICA
+from otimcorte.unitary_optimizer import find_optimal_combinations 
 import pandas as pd
 import json
 
 app = Flask(__name__)
 
-# Cache para armazenar o DataFrame e evitar múltiplas chamadas ao SAP
+
 data_cache = {}
 
 def get_full_data():
     """Busca os dados do SAP e armazena em cache para a sessão."""
     if 'full_df' not in data_cache:
         df = obter_dados_do_sap()
-        # Garante que as colunas numéricas sejam tratadas como tal
+        
         numeric_cols = ['Estoque', 'EstoqueMax', 'EstoqueMin', 'DispPkl', 'Desenvolvimento', 'Comprimento', 'Espessura', 'Planejado']
         for col in numeric_cols:
             df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0)
@@ -33,7 +33,7 @@ def index():
 
 @app.route('/input-plates', methods=['POST'])
 def input_plates():
-    # ... (código existente, sem alterações)
+    
     data = request.form.get('data')
     df = pd.read_json(data)
     df_to_process = df[df['Considerar no cálculo']].copy()
@@ -46,7 +46,7 @@ def input_plates():
 
 @app.route('/calculate', methods=['POST'])
 def calculate():
-    # ... (código existente, com uma pequena adição para o cache)
+    
     original_data = request.form.get('original_data')
     df = pd.read_json(original_data)
     df_to_process = df[df['Considerar no cálculo']].copy()
@@ -89,14 +89,14 @@ def calculate():
         report.append({'espessura': esp, 'tipo': sheet_type, 'summary': summary, 'sheet_count': count})
     resumo_final = df_to_process[['ItemCode', 'ItemName', 'Estoque', 'ToCut', 'EstoqueFinal', 'EstoqueMin', 'EstoqueMax']]
     items = resumo_final.drop_duplicates(subset=['ItemCode']).to_dict(orient='records')
-    # Adiciona os itens do resumo ao cache para uso posterior
+    
     data_cache['summary_items'] = items
     return render_template('report.html', report=report, total_sheets=total_sheets, items=items)
 
 
-# --- NOVA ROTA PARA OTIMIZAÇÃO UNITÁRIA ---
-# --- ROTA DE OTIMIZAÇÃO UNITÁRIA ATUALIZADA ---
-# --- ROTA DE OTIMIZAÇÃO UNITÁRIA ATUALIZADA ---
+
+
+
 @app.route('/optimize/<item_code>', methods=['GET', 'POST'])
 def optimize(item_code):
     """
@@ -106,13 +106,13 @@ def optimize(item_code):
         sheet_width = int(request.form.get('sheet_width', 1200))
         expected_loss = int(request.form.get('expected_loss', 20))
         development_variation = int(request.form.get('development_variation', 0))
-        # --- NOVO PARÂMETRO: Obtém a opção de itens por chapa ---
+        
         max_items_option = request.form.get('max_items_option', '3')
-    else: # GET request
+    else: 
         sheet_width = 1200
         expected_loss = 20
         development_variation = 0
-        max_items_option = '3' # Valor padrão na primeira visita
+        max_items_option = '3' 
 
     max_items_per_sheet = int(max_items_option)
     full_df = get_full_data()
@@ -122,14 +122,14 @@ def optimize(item_code):
         return "Item não encontrado!", 404
     main_item = main_item_series.iloc[0].to_dict()
 
-    # Chama a lógica de otimização com os novos parâmetros
+    
     solutions = find_optimal_combinations(
         main_item=main_item,
         all_items=full_df.to_dict(orient='records'),
         sheet_width=sheet_width,
         expected_loss=expected_loss,
         development_variation=development_variation,
-        max_items_per_sheet=max_items_per_sheet # Passa o limite de itens
+        max_items_per_sheet=max_items_per_sheet 
     )
 
     return render_template(
@@ -139,7 +139,7 @@ def optimize(item_code):
         sheet_width=sheet_width,
         expected_loss=expected_loss,
         development_variation=development_variation,
-        selected_option=max_items_option # Passa a opção selecionada para o template
+        selected_option=max_items_option 
     )
 
 if __name__ == '__main__':
