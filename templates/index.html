@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Otimização de Corte - Seleção de Itens</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <h1>Itens para Otimização de Corte</h1>
+    <form action="/" method="post">
+        <input type="hidden" name="data" id="data">
+        <table id="items-table">
+            <thead>
+                <tr>
+                    <th>Considerar no cálculo</th>
+                    <th>MrpTipo</th>
+                    <th>ItemCode</th>
+                    <th>ItemName</th>
+                    <th>MRP</th>
+                    <th>Estoque</th>
+                    <th>EstoqueMax</th>
+                    <th>EstoqueMin</th>
+                    <th>DispPkl</th>
+                    <th>Desenvolvimento</th>
+                    <th>Comprimento</th>
+                    <th>Espessura</th>
+                    <th>Planejado</th>
+                    <th>Variação de espessura</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data %}
+                <tr>
+                    <td><input type="checkbox" name="considerar" {% if row['Considerar no cálculo'] %}checked{% endif %}></td>
+                    <td>{{ row.MrpTipo }}</td>
+                    <td>{{ row.ItemCode }}</td>
+                    <td>{{ row.ItemName }}</td>
+                    <td>{{ row.MRP }}</td>
+                    <td>{{ row.Estoque }}</td>
+                    <td>{{ row.EstoqueMax }}</td>
+                    <td>{{ row.EstoqueMin }}</td>
+                    <td>{{ row.DispPkl }}</td>
+                    <td>{{ row.Desenvolvimento }}</td>
+                    <td>{{ row.Comprimento }}</td>
+                    <td>{{ row.Espessura }}</td>
+                    <td>{{ row.Planejado }}</td>
+                    <td><input type="number" name="variacao" value="{{ row['Variação de espessura'] }}" min="0"></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit" id="gerar-calculo">Gerar Cálculo</button>
+    </form>
+
+    <script>
+        document.getElementById('gerar-calculo').addEventListener('click', function(e) {
+            e.preventDefault();
+            const table = document.getElementById('items-table');
+            const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.textContent);
+            const data = [];
+            for (let i = 0; i < table.rows.length -1; i++) {
+                const row = table.rows[i+1];
+                const rowData = {};
+                rowData['Considerar no cálculo'] = row.cells[0].children[0].checked;
+                rowData['MrpTipo'] = row.cells[1].textContent;
+                rowData['ItemCode'] = row.cells[2].textContent;
+                rowData['ItemName'] = row.cells[3].textContent;
+                rowData['MRP'] = parseFloat(row.cells[4].textContent);
+                rowData['Estoque'] = parseFloat(row.cells[5].textContent);
+                rowData['EstoqueMax'] = parseFloat(row.cells[6].textContent);
+                rowData['EstoqueMin'] = parseFloat(row.cells[7].textContent);
+                rowData['DispPkl'] = parseFloat(row.cells[8].textContent);
+                rowData['Desenvolvimento'] = parseFloat(row.cells[9].textContent);
+                rowData['Comprimento'] = parseFloat(row.cells[10].textContent);
+                rowData['Espessura'] = parseFloat(row.cells[11].textContent);
+                rowData['Planejado'] = parseFloat(row.cells[12].textContent);
+                rowData['Variação de espessura'] = parseInt(row.cells[13].children[0].value, 10);
+                data.push(rowData);
+            }
+            document.getElementById('data').value = JSON.stringify(data);
+            document.querySelector('form').submit();
+        });
+    </script>
+</body>
+</html>
