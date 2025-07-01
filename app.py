@@ -4,6 +4,7 @@ from otimcorte.logic import adjust_planned, best_fit_grouped
 from otimcorte.unitary_optimizer import find_optimal_combinations 
 import pandas as pd
 import json
+from livereload import Server
 
 app = Flask(__name__)
 
@@ -141,4 +142,6 @@ def optimize(item_code):
     )
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    server = Server(app.wsgi_app)
+    server.watch('**/*.*')
+    server.serve(port=5000, host='127.0.0.1', debug=True)

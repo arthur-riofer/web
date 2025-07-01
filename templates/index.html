@@ -3,24 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <title>Otimização de Corte - Seleção de Itens</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/Css_Global/style.css">
+    <link rel="stylesheet" href="/static/css/index.css">
 </head>
 <body>
-    <h1>✂️ Itens para Otimização de Corte</h1>
+    <h1><span>✂️<span></span> Itens para Otimização de Corte</h1>
     <form action="/input-plates" method="post">
         <input type="hidden" name="data" id="data">
         <table id="items-table">
-            <thead>
+            <thead class="itemsHeaderTitle">
                 <tr>
                     <th>Considerar no cálculo</th>
-                    <th>MrpTipo</th>
-                    <th>ItemCode</th>
-                    <th>ItemName</th>
-                    <th>MRP</th>
+                    <th>Tipo</th>
+                    <th>PA</th>
+                    <th>Descrição</th>
+                    <th>Demanda</th>
                     <th>Estoque</th>
-                    <th>EstoqueMax</th>
-                    <th>EstoqueMin</th>
-                    <th>DispPkl</th>
+                    <th>Estoque Máximo</th>
+                    <th>Estoque Mínimo</th>
+                    <th>Disponível</th>
                     <th>Desenvolvimento</th>
                     <th>Comprimento</th>
                     <th>Espessura</th>
@@ -28,7 +29,8 @@
                     <th>Variação de espessura</th>
                 </tr>
             </thead>
-            <tbody>
+
+            <tbody class="itemsContentValue">
                 {% for row in data %}
                 <tr>
                     <td><input type="checkbox" name="considerar" {% if row['Considerar no cálculo'] %}checked{% endif %}></td>
@@ -49,7 +51,7 @@
                 {% endfor %}
             </tbody>
         </table>
-        <button type="submit" id="gerar-calculo">Gerar Cálculo</button>
+        <button type="submit" id="gerar-calculo"><span>📈</span> Gerar Cálculo</button>
     </form>
 
     <script>
@@ -80,6 +82,16 @@
             document.getElementById('data').value = JSON.stringify(data);
             document.querySelector('form').submit();
         });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const tableColor = document.getElementById('items-table');
+            const rows = tableColor.querySelectorAll('tbody tr');
+
+            rows.forEach((row, index) => {
+                row.style.backgroundColor = index % 2 === 0 ? 'rgb(54, 54, 54)' : 'rgb(0, 0, 0)';
+
+            })
+        })
     </script>
 </body>
 </html>

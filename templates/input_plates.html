@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Informações de Insumo</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/Css_Global/style.css">
+    <link rel="stylesheet" href="/static/css/inputPlates.css">
 </head>
 <body>
     <h1>📝 Informações de Insumo</h1>
@@ -24,14 +25,28 @@
                 <tr>
                     <td>{{ plate.Espessura }}</td>
                     <td>{{ plate.SheetLengthType }}</td>
-                    <td><input type="number" name="quantity_{{ plate.Espessura }}_{{ plate.SheetLengthType }}" value="999" min="1" style="width: 100px;"></td>
-                    <td><input type="number" name="width_{{ plate.Espessura }}_{{ plate.SheetLengthType }}" value="1200" min="1" style="width: 100px;"></td>
+                    <td><input type="number" name="quantity_{{ plate.Espessura }}_{{ plate.SheetLengthType }}" value="999" min="1"></td>
+                    <td><input type="number" name="width_{{ plate.Espessura }}_{{ plate.SheetLengthType }}" value="1200" min="1"></td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
-        <button type="submit" id="gerar-calculo" style="margin-top: 20px;">Calcular Otimização</button>
+        <button type="submit" id="gerar-calculo" style="margin-top: 20px;">
+        <img width="24" height="24" src="https://img.icons8.com/material-outlined/24/repeat.png" alt="repeat"/>
+            Calcular Otimização</button>
     </form>
     <a href="/" class="back-button">⬅️ Voltar para Seleção</a>
+
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const tableColorOptimization = document.querySelector('.combo-table');
+            const rowsOptimization = tableColorOptimization.querySelectorAll('tbody tr');
+
+            rowsOptimization.forEach((row, index) => {
+                row.style.backgroundColor = index % 2 === 0 ? 'rgb(54, 54, 54)' : 'rgb(7, 19, 37)';
+            })
+        })
+    </script>
 </body>
 </html>

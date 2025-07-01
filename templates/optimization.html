@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Otimização de Cálculo Unitário</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/Css_Global/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/optimization.css') }}">
+    <!-- <style>
         .item-info-card { background-color: var(--cor-fundo-cartao); border: 1px solid var(--cor-borda-cartao); border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem; }
         .item-info-card h2 { margin-top: 0; color: var(--cor-texto-principal); }
         .item-info-card p { margin: 0.5rem 0; color: var(--cor-texto-secundario); }
@@ -14,11 +15,11 @@
         .size-decreased { color: #e74c3c; }
         select, input { width: 100%; box-sizing: border-box; padding: 10px; background-color: var(--cor-fundo-principal); border: 1px solid var(--cor-borda-cartao); border-radius: 5px; color: var(--cor-texto-principal); }
         label { display: block; margin-bottom: 0.5rem; }
-    </style>
+    </style> -->
 </head>
 <body>
-    <div class="site-main" style="max-width: 900px;">
-        <div style="grid-column: 1 / -1;">
+    <div class="site-main" >
+        <div class="child-main">
             <h1>⚙️ Otimização de Cálculo Unitário</h1>
 
             <div class="item-info-card">
@@ -50,7 +51,10 @@
                             <option value="3" {% if selected_option == '3' %}selected{% endif %}>Até 3 itens por chapa</option>
                         </select>
                     </div>
-                    <button type="submit">Re-calcular</button>
+                    <button type="submit">
+                        <span>
+                            <img width="24" height="24" src="https://img.icons8.com/material-outlined/24/repeat.png" alt="repeat"/>
+                        </span>Re-calcular</button>
                 </div>
             </form>
 
@@ -90,8 +94,34 @@
               </table>
             </section>
 
+            <div class="child_Legend">
+                <div>
+                    <a class="nada" href="#">
+                        🟦Sem Alteração
+                    </a>
+                    <a class="nada" href="#">
+                        🟥Redução
+                    </a>
+                    <a class="nada" href="#">
+                        🟩Aumento
+                    </a>
+                </div>
+            </div>
+
             <a href="/" class="back-button" style="margin-top: 2rem;">⬅️ Voltar para Seleção</a>
         </div>
     </div>
+
+    <script>
+         window.addEventListener('DOMContentLoaded', () => {
+            const tableColorOptimization = document.querySelector('.combo-table');
+            const rowsOptimization = tableColorOptimization.querySelectorAll('tbody tr');
+
+            rowsOptimization.forEach((row, index) => {
+                row.style.backgroundColor = index % 2 === 0 ? 'rgb(54, 54, 54)' : 'rgb(7, 19, 37)';
+
+            })
+        })
+    </script>
 </body>
 </html>

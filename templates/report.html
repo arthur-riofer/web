@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>Relatório de Corte</title>
-  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/Css_Global/style.css">
+  <link rel="stylesheet" href="/static/css/report.css">
 </head>
 <body>
   <h1>📊 Relatório de Corte Otimizado</h1>
@@ -26,7 +27,7 @@
 
   <section>
     <h2>📋 Resumo Final por Item</h2>
-    <table>
+    <table class="table_resumo">
       <tr><th>ItemCode</th><th>ItemName</th><th>Estoque</th><th>ToCut</th><th>EstoqueFinal</th><th>Min</th><th>Max</th></tr>
       {% for it in items %}
         <tr>
@@ -42,7 +43,7 @@
     </table>
   </section>
 
-   <h3>🔢 Total Geral de Chapas: {{ total_sheets }}</h3>
+   <h3 class="title_geral">🔢 Total Geral de Chapas: {{ total_sheets }}</h3>
   <a href="/" class="back-button">⬅️ Voltar para Seleção</a>
 
   <div id="item-detail" class="modal">

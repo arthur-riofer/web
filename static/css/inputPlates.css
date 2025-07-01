@@ -1,0 +1,48 @@
+*{
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+form{
+  margin: 1rem 0;
+  padding: 10px;
+}
+form button#gerar-calculo{
+  margin: 10px;
+  background-color: goldenrod;
+  padding: 5px;
+  border: none;
+  border-radius: 5px;
+  font-size: 15px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+table.combo-table{
+  width: 100%;
+  padding: 10px;
+}
+table.combo-table thead tr{
+  background-color: rgb(54, 54,54);
+}
+tbody td,th{
+  padding: 5px;
+}
+tbody tr td input{
+  background-color: white;
+  padding: 5px;
+  width: 50%;
+  display: block;
+  margin: 0 auto;
+  border: none;
+  color: black;
+  outline: none;
+}
+a.back-button{
+  margin: 20px ;
+  padding: 10px;
+  color: #fff;
+  text-decoration: none;
+}
