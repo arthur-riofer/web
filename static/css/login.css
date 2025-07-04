@@ -1,0 +1,139 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap");
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "DM Sans", sans-serif;
+}
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: background-image 1s ease-in-out;
+}
+.container-big {
+  width: 100%;
+  height: 100vh;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.content {
+  width: 100%;
+}
+.contentLogin {
+  background-color: rgba(32, 32, 32, 0.55);
+  backdrop-filter: blur(1px);
+  box-shadow: 0 0 3px black;
+  border-radius: 25px;
+  width: 100%;
+  max-width: 600px;
+  padding: 50px 0;
+  margin: 0 auto;
+}
+@media (max-width: 768px) {
+  .contentLogin {
+    max-width: 90%;
+    padding: 30px 15px;
+    border-radius: 15px;
+  }
+}
+.contentLogo {
+  display: block;
+  margin: 0 auto;
+  width: 50%;
+}
+.contentLogo img {
+  display: block;
+  filter: drop-shadow(1px 1px 35px black);
+  margin: 0 auto;
+  width: 130px;
+}
+.DivInputs {
+  padding: 20px;
+  width: 100%;
+  margin: 0 auto;
+}
+/* .boxInputSenha_2 input{
+  
+} */
+.boxInputEmail_1,
+.boxInputSenha_2{
+  position: relative;
+  padding: 5px;
+}
+.boxInputEmail_1 i,
+.boxInputSenha_2 i{
+  color: rgba(250, 250, 250, 0.419);
+  
+  font-size: 25px;
+  cursor: pointer;
+  position: absolute;
+  top: 23%;
+  right: 25%;
+  z-index: 999;
+}
+
+.boxInputEmail_1 input,
+.boxInputSenha_2 input {
+  width: 55%;
+  background-color: rgba(0, 0, 0, 0.419);
+  color: white;
+  -webkit-backdrop-filter: blur(15px);
+  font-size: 18px;
+  padding: 12px 45px 12px 12px;
+  outline: none;
+  border-radius: 12px;
+  border: none;
+  display: block;
+  margin: 0 auto;
+  transition: 0.4s ease-in-out;
+}
+.boxInputEmail_1 input::placeholder,
+.boxInputSenha_2 input::placeholder {
+  font-size: 18px;
+  font-weight: 700;
+}
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
+input[type="password"]::-webkit-credentials-auto-fill-button,
+input[type="password"]::-webkit-inner-spin-button,
+input[type="password"]::-webkit-clear-button,
+input[type="password"]::-webkit-reveal-button {
+  display: none;
+  -webkit-appearance: none;
+}
+input:-webkit-autofill {
+  -webkit-text-fill-color: white !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+.contentButton {
+  padding: 5px;
+  width: 100%;
+  display: block;
+  margin: 0 auto;
+}
+.contentButton button {
+  background-color: rgba(0, 0, 0, 0.389);
+  backdrop-filter: blur(2px);
+  color: white;
+  border: none;
+  display: block;
+  margin: 0 auto;
+  width: 50%;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 15px;
+  transition: 0.4s all;
+}
+.contentButton button:hover {
+  background-color: rgba(0, 0, 0, 0.009);
+}

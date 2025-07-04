@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
 :root {
  --cor-fundo-principal: #10111a; 
  --cor-fundo-cartao: #1e1f2b; 
@@ -10,7 +11,7 @@
  --fonte-principal: 'Inter', sans-serif; 
 }
 *{
-  font-family: "Inter", sans-serif;
+  font-family: "DM Sans", sans-serif;
   padding: 0;
   margin: 0;
   box-sizing: border-box;

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/static/css/login.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
+  <title>Login - APC-R</title>
+</head>
+<body>
+  <div class="container-big">
+    <div class="content">
+      <div class="contentLogin">
+        <div class="contentLogo">
+          <img src="/static/images/gold.png" alt="logo-riofer" />
+        </div>
+
+        <h1 style="font-size: 24px; color: rgba(255, 255, 255, 0.774); text-align: center; padding: 5px;">
+          Bem-vindo ao Apc-R
+        </h1>
+
+        <!-- FORMULÁRIO DE LOGIN -->
+        <form id="loginForm">
+          <div class="DivInputs">
+            <div class="boxInputEmail_1">
+              <input type="email" name="email" id="email" autocomplete="off" placeholder="Email:" required />
+              <i class="bi bi-person"></i>
+            </div>
+            <div class="boxInputSenha_2">
+              <input type="password" name="senha" id="senha" autocomplete="new-password" placeholder="Senha:" required />
+              <i class="bi bi-eye" id="BtnEyeSenha"></i>
+            </div>
+          </div>
+
+          <div class="contentButton">
+            <button type="submit">Continuar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+
+  <script>
+  // Config Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyC45TRUhvI901LPrAXVvoZQfEFy6ztwzuI",
+    authDomain: "riofer-537b0.firebaseapp.com",
+    projectId: "riofer-537b0",
+    storageBucket: "riofer-537b0.appspot.com",
+    messagingSenderId: "527328928618",
+    appId: "1:527328928618:web:347dde977416cb3eed7b13",
+    measurementId: "G-7HQVGFSKHC"
+  };
+
+  // Inicializa Firebase
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+
+  // Login com Firebase + integração com Flask
+  const form = document.getElementById("loginForm");
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const email = document.getElementById("email").value;
+    const senha = document.getElementById("senha").value;
+
+    auth.signInWithEmailAndPassword(email, senha)
+      .then(userCredential => {
+        return userCredential.user.getIdToken(); // pega token JWT
+      })
+      .then(idToken => {
+        // Envia o token para o backend (Flask)
+        return fetch('/sessionLogin', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ idToken: idToken }),
+          credentials: 'include'
+        });
+      })
+      .then(() => {
+        window.location.href = "./"; // Redireciona após login
+      })
+      .catch(error => {
+        alert("Erro ao fazer login: " + error.message);
+      });
+  });
+
+  // Olho da senha
+  const InputPass = document.getElementById("senha");
+  const BtnSenha = document.getElementById("BtnEyeSenha");
+
+  BtnSenha.addEventListener("click", () => {
+    if (InputPass.type === 'password') {
+      InputPass.type = 'text';
+      BtnSenha.classList.replace("bi-eye", "bi-eye-slash");
+    } else {
+      InputPass.type = 'password';
+      BtnSenha.classList.replace("bi-eye-slash", "bi-eye");
+    }
+  });
+
+  // Trocar fundo
+  const imagens = [
+    "url('https://images.pexels.com/photos/46167/iron-rods-reinforcing-bars-rods-steel-bars-46167.jpeg')",
+    "url('https://images.pexels.com/photos/15059762/pexels-photo-15059762.jpeg')",
+    "url('https://images.pexels.com/photos/5308536/pexels-photo-5308536.jpeg')"
+  ];
+  let index = 0;
+  function trocarImagem() {
+    document.body.style.backgroundImage = imagens[index];
+    index = (index + 1) % imagens.length;
+  }
+  trocarImagem();
+  setInterval(trocarImagem, 10000);
+</script>
+</body>
+</html>
