@@ -70,7 +70,7 @@
 
     auth.signInWithEmailAndPassword(email, senha)
       .then(userCredential => {
-        return userCredential.user.getIdToken(); // pega token JWT
+        return userCredential.user.getIdToken(true); // pega token JWT
       })
       .then(idToken => {
         // Envia o token para o backend (Flask)
