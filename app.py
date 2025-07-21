@@ -24,9 +24,7 @@ firebase_admin.initialize_app(cred)
 
 # Cache de dados (para não recarregar o SAP toda hora)
 data_cache = {}
-
 # ============================== AUTENTICAÇÃO / SESSÃO ==============================
-
 def login_required(f):
     """Decorator que obriga login para acessar rotas."""
     @wraps(f)
